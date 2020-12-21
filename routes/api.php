@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +22,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 //posts
-route::get('/posts',[PostController::class,'index']);
-route::post('/post',[PostController::class,'store']);
-route::get('/posts/{id}',[PostController::class,'show']);
-route::put('/posts/{id}',[PostController::class,'update']);
-route::delete('/posts/{id}',[PostController::class,'destroy']);
+
+
+//register
+route::post('/register',[AuthController::class,'register']);
+route::post('/login',[AuthController::class,'login']);
+
+route::group(['Middleware'=>['auth:sanctrum']],function(){
+    route::get('/posts',[PostController::class,'index']);
+    route::post('/post',[PostController::class,'store']);
+    route::get('/posts/{id}',[PostController::class,'show']);
+    route::put('/posts/{id}',[PostController::class,'update']);
+    route::delete('/posts/{id}',[PostController::class,'destroy']);
+
+    route::post('/logout',[PostController::class,'logout']);
+});
